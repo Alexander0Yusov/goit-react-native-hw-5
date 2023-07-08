@@ -12,64 +12,56 @@ import {
 } from "react-native";
 import CardComment from "../components/CardComment";
 import CardOwnComment from "../components/CardOwnComment";
-import { useState } from "react";
-import { addDoc, collection, doc, set, add } from "firebase/firestore";
+import { useEffect, useState } from "react";
+import { addDoc, collection, doc, set, add, getDocs } from "firebase/firestore";
 import { db } from "../config";
+import { useSelector } from "react-redux";
+import { authSelector } from "../redux/stateSelectors";
 
 export default CommentsSubScreen = ({ route }) => {
   const [myComment, setMyComment] = useState("");
+  const [comments, setComments] = useState([]);
+  const { photoURL, uid } = useSelector(authSelector);
   const { id } = route.params;
+
+  useEffect(() => {
+    if (myComment === "") {
+      getAllCommentsToPost();
+      console.log("comments  ", comments);
+    }
+  }, [myComment]);
 
   const onSendComment = async () => {
     try {
-      // const docRef = await addDoc(collection(db, `posts.${id}.comments`), {
-      //   myComment,
-      // });
+      const docRef = await doc(db, "posts", id);
+      const comment = {
+        date: new Date().toLocaleDateString("uk-UA"),
+        time: new Date().toLocaleTimeString("uk-UA"),
+        comment: myComment,
+        photoURL,
+        uid,
+      };
 
-      // firebase
-      //   .firestore()
-      //   .collection("users")
-      //   .doc("userID")
-      //   .collection("orders")
-      //   .add({
-      //     // Здесь вы можете указать данные для нового документа в коллекции 'orders'
-      //     // Например, 'orderName': 'Название заказа', 'orderDate': 'Дата заказа' и т.д.
-      //   });
-
-      // const postDocRef = doc(db, "posts", id);
-      console.log("hi");
-
-      const docRef = await db
-        .firestore()
-        .collection("posts")
-        .doc(`${id}`)
-        .collection("comments")
-        .add({
-          myComment,
-        });
-
-      console.log("Document written with ID: ", docRef);
+      await addDoc(collection(docRef, "comments"), comment);
+      setMyComment("");
     } catch (e) {
       console.error("Error adding document: ", e);
       throw e;
     }
   };
 
-  const writeDataToFirestore = async (photoURI) => {
-    try {
-      const docRef = await addDoc(collection(db, "posts"), {
-        photoURI,
-        location,
-        namePhoto,
-        namePlace,
-        uid,
-        displayName,
-      });
-      console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-      throw e;
-    }
+  const getAllCommentsToPost = async () => {
+    // Query a reference to a subcollection
+    const querySnapshot = await getDocs(
+      collection(db, "posts", `${id}`, "comments")
+    );
+    const arr = [];
+    querySnapshot.forEach((doc) => {
+      // doc.data() is never undefined for query doc snapshots
+      arr.push({ id: doc.id, data: doc.data() });
+      console.log(doc.id, " => ", doc.data());
+    });
+    setComments(arr);
   };
 
   return (
@@ -80,34 +72,26 @@ export default CommentsSubScreen = ({ route }) => {
       }}
     >
       <View style={styles.container}>
-        {/* <Text style={styles.title}>Comments SubScreen</Text> */}
-        {/* <FlatList
-        data={posts}
-        keyExtractor={(item) => String(item.id)}
-        renderItem={({ item }) => {
-          if (item) {
-            return (
-              <CardPost
-                photo={item.data.photoURI}
-                namePhoto={item.data.namePhoto}
-                namePlace={item.data.namePlace}
-                toMap={() => {
-                  navigation.navigate("mapPostsSubScreen", {
-                    location: item.data.location,
-                  });
-                }}
-                toComments={toCommentsScreen}
-              />
-            );
-          }
-        }}
-      ></FlatList> */}
+        <Text style={styles.title}>Comments SubScreen MUST BE IMG</Text>
+        {comments.length > 0 && (
+          <FlatList
+            data={comments}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={({ item: { data } }) => {
+              const { comment, uid: uid_, photoURL } = data;
+              if (uid_ !== uid) {
+                return <CardComment text={`${comment}`} portrait={photoURL} />;
+              }
+              return <CardOwnComment text={`${comment}`} portrait={photoURL} />;
+            }}
+          ></FlatList>
+        )}
 
-        <View style={{ marginBottom: "auto" }}>
-          <CardComment text="sometext" />
+        {/* <View style={{ marginBottom: "auto" }}>
+          {comments.length > 0 && <CardComment text="sometext" />}
           <CardOwnComment text="sometext" />
           <CardComment text="sometext" />
-        </View>
+        </View> */}
 
         <KeyboardAvoidingView
           style={{ width: "100%" }}

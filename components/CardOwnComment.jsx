@@ -4,22 +4,21 @@ import { Feather } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 
-export default CardOwnComment = ({ text }) => {
+export default CardOwnComment = ({ text, portrait }) => {
   return (
     <View style={styles.wrap}>
-      <Text style={styles.title}>
-        {
-          "lorem lorem lorem lorem                         lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem lorem."
-        }
-      </Text>
+      <Text style={styles.title}>{text}</Text>
 
       <View style={styles.thumb}>
-        <Image
-          style={styles.image}
-          source={{
-            uri: "https://firebasestorage.googleapis.com/v0/b/postsaboutphotos.appspot.com/o/sights%2F7hHOauPeq?alt=media&token=36a00425-66ec-4d98-a886-00688f257289",
-          }}
-        />
+        {portrait && (
+          <Image
+            style={styles.image}
+            source={{
+              uri: portrait,
+              // uri: "https://firebasestorage.googleapis.com/v0/b/postsaboutphotos.appspot.com/o/sights%2F7hHOauPeq?alt=media&token=36a00425-66ec-4d98-a886-00688f257289",
+            }}
+          />
+        )}
       </View>
     </View>
   );
@@ -42,6 +41,7 @@ const styles = StyleSheet.create({
     marginLeft: 12,
     borderRadius: 15,
     overflow: "hidden",
+    backgroundColor: "gray",
     // borderWidth: 1,
     // borderColor: "red",
   },
