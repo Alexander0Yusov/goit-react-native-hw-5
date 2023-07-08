@@ -7,6 +7,7 @@ import {
   Image,
   TouchableWithoutFeedback,
 } from "react-native";
+import * as DocumentPicker from "expo-document-picker";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
@@ -17,6 +18,50 @@ import { authSelector } from "../redux/stateSelectors";
 export default ProfileScreen = () => {
   const dispatch = useDispatch();
   const state = useSelector(authSelector);
+
+  const pickFile = async () => {
+    // выбор файла
+    try {
+      const res = await DocumentPicker.getDocumentAsync();
+      console.log(res.uri);
+      return res.uri;
+    } catch (err) {
+      console.log("Ошибка выбора файла: " + err);
+    }
+
+    // надо проводить через мутацию стора. подшить ссылку как displayName
+  };
+
+  const setDbgetDb = async () => {
+    // запись и чтение базы
+    const response = await fetch(photo);
+    const file = await response.blob();
+    const storageRef = ref(storage, `portraits/${email}`);
+
+    try {
+      const snapshot = await uploadBytes(storageRef, file);
+
+      console.log("Uploaded a blob or file! == ", snapshot);
+    } catch (error) {
+      console.log(error);
+    }
+
+    // download
+    // Create a reference from a Google Cloud Storage URI
+    const gsReference = ref(
+      storage,
+      `gs://postsaboutphotos.appspot.com/portraits/${email}`
+    );
+
+    const res = await getDownloadURL(gsReference);
+    console.log("reference from a Google Cloud Storage URI == ", res);
+    dispatch(setPhotoURL(res));
+  };
+
+  const addPortret = () => {
+    // сделать тоггл удаление-загрузка
+    pickFile();
+  };
 
   return (
     <View style={styles.container}>
@@ -30,8 +75,9 @@ export default ProfileScreen = () => {
               <TouchableOpacity
                 style={styles.buttonAddPortrait}
                 activeOpacity={0.8}
+                onPress={addPortret}
               >
-                {false ? (
+                {!state.photoURL ? (
                   <MaterialIcons
                     name="add-circle-outline"
                     size={28}

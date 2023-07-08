@@ -52,6 +52,7 @@ const optionsPostsSubScreen = {
     borderWidth: 1,
     borderColor: "red",
   },
+  tabBarHideOnKeyboard: true,
   tabBarIcon: ({ color }) => (
     <SimpleLineIcons name="grid" size={24} color={color} />
   ),

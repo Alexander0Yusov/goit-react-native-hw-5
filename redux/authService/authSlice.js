@@ -83,6 +83,9 @@ const authSlice = createSlice({
     setError: (state, action) => {
       state.error = action.payload;
     },
+    setPhotoURL: (state, action) => {
+      state.photoURL = action.payload;
+    },
     setUser: (state, action) => {
       const { uid, displayName, email, photoURL } = action.payload;
       state = { ...state, uid, displayName, email, photoURL };
@@ -114,4 +117,5 @@ export const authReducer = authSlice.reducer;
 
 // export const filterReducer = filterSlice.reducer;
 export const { setError } = authSlice.actions;
+export const { setPhotoURL } = authSlice.actions;
 export const { setUser } = authSlice.actions;

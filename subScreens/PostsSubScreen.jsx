@@ -9,14 +9,16 @@ import {
 import CardPost from "../components/CardPost";
 import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
+import { collection, getDocs } from "firebase/firestore";
+import { db } from "../config";
 
 export default PostsScreen = ({ navigation, route }) => {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
-    setPosts((prev) => [...prev, route.params]);
-    console.log(posts);
-  }, [route.params]);
+    getDataFromFirestore();
+    console.log("hi");
+  }, []);
 
   useEffect(() => {
     navigation.setOptions({
@@ -45,6 +47,23 @@ export default PostsScreen = ({ navigation, route }) => {
     });
   });
 
+  const getDataFromFirestore = async () => {
+    try {
+      const snapshot = await getDocs(collection(db, "posts"));
+      const arr = [];
+
+      snapshot.forEach((doc) => {
+        arr.push({ id: doc.id, data: doc.data() });
+        // console.log(`${doc.id} =>`, doc.data());
+      });
+      setPosts(arr);
+      return arr;
+    } catch (error) {
+      console.log(error);
+      throw error;
+    }
+  };
+
   const toMapScreen = () => {
     navigation.navigate("mapPostsSubScreen");
   };
@@ -56,6 +75,7 @@ export default PostsScreen = ({ navigation, route }) => {
   return (
     <View style={styles.container}>
       {false && (
+        // этот блок в топку
         <>
           <Text style={styles.title}>Posts Screen</Text>
           <TouchableOpacity
@@ -75,16 +95,24 @@ export default PostsScreen = ({ navigation, route }) => {
       {posts.length > 0 && (
         <FlatList
           data={posts}
-          keyExtractor={(item, index) => String(index)}
+          keyExtractor={(item) => String(item.id)}
           renderItem={({ item }) => {
             if (item) {
               return (
                 <CardPost
-                  photo={item.photo}
-                  namePhoto={item.namePhoto}
-                  namePlace={item.namePlace}
-                  toMap={toMapScreen}
-                  toComments={toCommentsScreen}
+                  photo={item.data.photoURI}
+                  namePhoto={item.data.namePhoto}
+                  namePlace={item.data.namePlace}
+                  toMap={() => {
+                    navigation.navigate("mapPostsSubScreen", {
+                      location: item.data.location,
+                    });
+                  }}
+                  toComments={() => {
+                    navigation.navigate("commentsPostsSubScreen", {
+                      id: item.id,
+                    });
+                  }}
                 />
               );
             }

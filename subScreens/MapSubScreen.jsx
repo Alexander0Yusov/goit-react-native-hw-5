@@ -1,20 +1,23 @@
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 
-export default MapSubScreen = () => {
+export default MapSubScreen = ({ route }) => {
+  const {
+    location: { latitude, longitude },
+  } = route.params;
   return (
     <View style={styles.container}>
       {/* <Text style={styles.title}>Map SubScreen</Text> */}
       <MapView
         style={styles.map}
         initialRegion={{
-          latitude: 37.78825,
-          longitude: -122.4324,
+          latitude,
+          longitude,
           latitudeDelta: 0.0922,
           longitudeDelta: 0.0421,
         }}
       >
-        <Marker coordinate={{ latitude: 37.78825, longitude: -122.4324 }} />
+        <Marker coordinate={{ latitude, longitude }} />
       </MapView>
     </View>
   );

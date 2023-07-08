@@ -14,6 +14,12 @@ import { useEffect, useState } from "react";
 import { Camera } from "expo-camera";
 import * as Location from "expo-location";
 import { HeaderBackButton } from "@react-navigation/elements";
+import { db, storage } from "../config";
+import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import { useDispatch, useSelector } from "react-redux";
+import { authSelector } from "../redux/stateSelectors";
+import shortid from "shortid";
+import { addDoc, collection } from "firebase/firestore";
 
 export default CreatePostScreen = ({ navigation }) => {
   const [cameraRef, setCameraRef] = useState(null);
@@ -23,18 +29,18 @@ export default CreatePostScreen = ({ navigation }) => {
   const [namePlace, setNamePlace] = useState("");
   const [inputIsActive, setInputIsActive] = useState(false);
 
+  const { uid, displayName } = useSelector(authSelector);
+  const dispatch = useDispatch();
+
   useEffect(() => {
     resetForm();
     setInputIsActive(false);
-    async () => {
+    (async () => {
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
-        setErrorMsg("Permission to access location was denied");
-        return;
+        console.log("Permission to access location was denied");
       }
-      // строку ниже вроде надо бы убрать
-      await Location.isBackgroundLocationAvailableAsync(true);
-    };
+    })();
   }, []);
 
   useEffect(() => {
@@ -49,9 +55,9 @@ export default CreatePostScreen = ({ navigation }) => {
         />
       ),
     });
-  });
+  }, []);
 
-  const makeSnap = async () => {
+  const onSnap = async () => {
     if (photo) {
       setPhoto("");
       return;
@@ -70,11 +76,57 @@ export default CreatePostScreen = ({ navigation }) => {
     setNamePlace("");
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     const formData = { photo, namePhoto, namePlace, location };
     setInputIsActive(false);
-    navigation.navigate("basePostsSubScreen", formData);
+    navigation.navigate("basePostsSubScreen");
+    const photoRefResult = await getPotoRef();
+    await writeDataToFirestore(photoRefResult);
     resetForm();
+  };
+
+  const getPotoRef = async () => {
+    const response = await fetch(photo);
+    const file = await response.blob();
+    const newId = shortid.generate();
+
+    // create a ref
+    const storageRef = ref(storage, `sights/${newId}`);
+
+    // upload to db
+    try {
+      const snapshot = await uploadBytes(storageRef, file);
+      // console.log("Uploaded a blob or file! == ", snapshot);
+    } catch (error) {
+      console.log(error);
+    }
+
+    // create a ref from a Google Cloud Storage URI
+    const gsReference = ref(
+      storage,
+      `gs://postsaboutphotos.appspot.com/sights/${newId}`
+    );
+
+    const res = await getDownloadURL(gsReference);
+    // console.log("reference from a Google Cloud Storage URI == ", res);
+    return res;
+  };
+
+  const writeDataToFirestore = async (photoURI) => {
+    try {
+      const docRef = await addDoc(collection(db, "posts"), {
+        photoURI,
+        location,
+        namePhoto,
+        namePlace,
+        uid,
+        displayName,
+      });
+      console.log("Document written with ID: ", docRef.id);
+    } catch (e) {
+      console.error("Error adding document: ", e);
+      throw e;
+    }
   };
 
   return (
@@ -89,7 +141,7 @@ export default CreatePostScreen = ({ navigation }) => {
           <View style={styles.thumb}>
             <Camera style={styles.camera} ref={setCameraRef}>
               {photo && <Image source={{ uri: photo }} style={styles.image} />}
-              <TouchableOpacity style={styles.photoButton} onPress={makeSnap}>
+              <TouchableOpacity style={styles.photoButton} onPress={onSnap}>
                 <MaterialIcons name="photo-camera" size={24} color="#BDBDBD" />
               </TouchableOpacity>
             </Camera>
