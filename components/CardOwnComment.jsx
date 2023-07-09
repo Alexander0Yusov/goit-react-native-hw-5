@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     paddingLeft: 12,
     paddingRight: 12,
-    backgroundColor: "#F6F6F6",
+    backgroundColor: "#BDBDBD",
     borderRadius: 12,
     // borderWidth: 1,
     // borderColor: "yellow",

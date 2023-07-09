@@ -2,6 +2,7 @@ import {
   StyleSheet,
   View,
   Text,
+  Image,
   TouchableOpacity,
   FlatList,
   TextInput,
@@ -22,7 +23,7 @@ export default CommentsSubScreen = ({ route }) => {
   const [myComment, setMyComment] = useState("");
   const [comments, setComments] = useState([]);
   const { photoURL, uid } = useSelector(authSelector);
-  const { id } = route.params;
+  const { id, postPicture } = route.params;
 
   useEffect(() => {
     if (myComment === "") {
@@ -32,6 +33,7 @@ export default CommentsSubScreen = ({ route }) => {
   }, [myComment]);
 
   const onSendComment = async () => {
+    if (!myComment) return;
     try {
       const docRef = await doc(db, "posts", id);
       const comment = {
@@ -48,6 +50,7 @@ export default CommentsSubScreen = ({ route }) => {
       console.error("Error adding document: ", e);
       throw e;
     }
+    setMyComment("");
   };
 
   const getAllCommentsToPost = async () => {
@@ -72,7 +75,9 @@ export default CommentsSubScreen = ({ route }) => {
       }}
     >
       <View style={styles.container}>
-        <Text style={styles.title}>Comments SubScreen MUST BE IMG</Text>
+        <View style={styles.thumb}>
+          <Image style={styles.image} source={{ uri: postPicture }} />
+        </View>
         {comments.length > 0 && (
           <FlatList
             data={comments}
@@ -108,7 +113,7 @@ export default CommentsSubScreen = ({ route }) => {
                 // setIsPassFocus(false);
                 // setFieldTouched("password");
               }}
-              placeholder="Пароль"
+              placeholder="Ваш комментар"
               cursorColor={"black"}
               paddingLeft={16}
               value={myComment}
@@ -132,12 +137,25 @@ export default CommentsSubScreen = ({ route }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: "flex-end",
+    justifyContent: "flex-start",
     backgroundColor: "#fff",
     alignItems: "center",
     // justifyContent: "center",
-    borderWidth: 1,
-    borderColor: "red",
+    // borderWidth: 1,
+    // borderColor: "red",
+  },
+
+  thumb: {
+    width: "100%",
+    marginBottom: "auto",
+    borderRadius: 8,
+    overflow: "hidden",
+    // borderWidth: 1,
+    // borderColor: "red",
+  },
+  image: {
+    width: "100%",
+    height: 260,
   },
 
   title: {
@@ -156,10 +174,11 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 50,
     marginTop: 8,
+    marginBottom: 2,
     alignItems: "center",
 
-    borderWidth: 1,
-    borderColor: "green",
+    // borderWidth: 1,
+    // borderColor: "green",
   },
   inputPass: {
     height: 50,

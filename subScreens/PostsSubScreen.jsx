@@ -111,6 +111,7 @@ export default PostsScreen = ({ navigation, route }) => {
                   toComments={() => {
                     navigation.navigate("commentsPostsSubScreen", {
                       id: item.id,
+                      postPicture: item.data.photoURI,
                     });
                   }}
                 />

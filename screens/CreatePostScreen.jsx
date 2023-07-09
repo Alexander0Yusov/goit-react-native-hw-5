@@ -12,6 +12,7 @@ import {
 import { MaterialIcons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { Camera } from "expo-camera";
+import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
 import { HeaderBackButton } from "@react-navigation/elements";
 import { db, storage } from "../config";
@@ -23,6 +24,8 @@ import { addDoc, collection } from "firebase/firestore";
 
 export default CreatePostScreen = ({ navigation }) => {
   const [cameraRef, setCameraRef] = useState(null);
+  const [type, setType] = useState(Camera.Constants.Type.back);
+  const [hasPermission, setHasPermission] = useState(null);
   const [photo, setPhoto] = useState("");
   const [location, setLocation] = useState(null);
   const [namePhoto, setNamePhoto] = useState("");
@@ -56,6 +59,22 @@ export default CreatePostScreen = ({ navigation }) => {
       ),
     });
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      const { status } = await Camera.requestCameraPermissionsAsync();
+      await MediaLibrary.requestPermissionsAsync();
+
+      setHasPermission(status === "granted");
+    })();
+  }, []);
+
+  // if (hasPermission === null) {
+  //   return <View />;
+  // }
+  // if (hasPermission === false) {
+  //   return <Text>No access to camera</Text>;
+  // }
 
   const onSnap = async () => {
     if (photo) {

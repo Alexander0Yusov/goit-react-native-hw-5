@@ -14,6 +14,10 @@ import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { signOutThunk } from "../redux/authService/thunks";
 import { authSelector } from "../redux/stateSelectors";
+import { useState } from "react";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import { storage } from "../config";
+import { setPhotoURL } from "../redux/authService/authSlice";
 
 export default ProfileScreen = () => {
   const dispatch = useDispatch();
@@ -28,15 +32,16 @@ export default ProfileScreen = () => {
     } catch (err) {
       console.log("Ошибка выбора файла: " + err);
     }
+    return res;
 
     // надо проводить через мутацию стора. подшить ссылку как displayName
   };
 
-  const setDbgetDb = async () => {
+  const getFileRef = async (photo) => {
     // запись и чтение базы
     const response = await fetch(photo);
     const file = await response.blob();
-    const storageRef = ref(storage, `portraits/${email}`);
+    const storageRef = ref(storage, `portraits/${state.uid}`);
 
     try {
       const snapshot = await uploadBytes(storageRef, file);
@@ -50,17 +55,23 @@ export default ProfileScreen = () => {
     // Create a reference from a Google Cloud Storage URI
     const gsReference = ref(
       storage,
-      `gs://postsaboutphotos.appspot.com/portraits/${email}`
+      `gs://postsaboutphotos.appspot.com/portraits/${state.uid}`
     );
 
     const res = await getDownloadURL(gsReference);
     console.log("reference from a Google Cloud Storage URI == ", res);
-    dispatch(setPhotoURL(res));
+    return res;
   };
 
-  const addPortret = () => {
+  const addPortret = async () => {
     // сделать тоггл удаление-загрузка
-    pickFile();
+    if (state.photoURL) {
+      dispatch(setPhotoURL(""));
+      return;
+    }
+    const filePath = await pickFile();
+    const profilePortraitGlobalUrl = await getFileRef(filePath);
+    dispatch(setPhotoURL(profilePortraitGlobalUrl));
   };
 
   return (
@@ -72,6 +83,14 @@ export default ProfileScreen = () => {
         >
           <View style={[styles.profileContent]}>
             <View style={styles.imageThumb}>
+              {state.photoURL && (
+                <Image
+                  style={styles.image}
+                  source={{
+                    uri: state.photoURL,
+                  }}
+                />
+              )}
               <TouchableOpacity
                 style={styles.buttonAddPortrait}
                 activeOpacity={0.8}
@@ -143,9 +162,15 @@ const styles = StyleSheet.create({
     width: 120,
     backgroundColor: "#F6F6F6",
     borderRadius: 16,
+    // overflow: "hidden",
 
     // borderWidth: 1,
     // borderColor: "red",
+  },
+  image: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 16,
   },
   buttonAddPortrait: {
     position: "absolute",
