@@ -60,9 +60,9 @@ export const signOutFulfilledHandler = (state) => {
   console.log("signOut Fulfilled Handler == ", state);
 };
 
-// export const getUserFulfilledHandler = (state, { payload }) => {
-//   state.isLoading = false;
-//   state.error = null;
-//   state.user = payload;
-//   console.log('payload user ', payload);
-// };
+export const updateUserFulfilledHandler = (state, { payload }) => {
+  state.isLoading = false;
+  state.error = null;
+  state.photoURL = payload.photoURL;
+  console.log("update User Fulfilled Handler == ", payload);
+};

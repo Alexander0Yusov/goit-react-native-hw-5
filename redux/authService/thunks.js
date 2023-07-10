@@ -56,7 +56,12 @@
 // );
 
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { registerDB, loginDB, signOut_ } from "./authOperations";
+import {
+  registerDB,
+  loginDB,
+  signOut_,
+  updatePortrait,
+} from "./authOperations";
 
 export const signUpThunk = createAsyncThunk(
   "auth/signUp",
@@ -85,6 +90,17 @@ export const signOutThunk = createAsyncThunk(
   async (_, thunkAPI) => {
     try {
       return await signOut_();
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
+  }
+);
+
+export const updateUserThunk = createAsyncThunk(
+  "auth/update",
+  async (data, thunkAPI) => {
+    try {
+      return await updatePortrait(data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error.message);
     }

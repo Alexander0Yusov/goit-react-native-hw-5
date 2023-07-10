@@ -1,28 +1,3 @@
-// import { axiosInstance, pushToken, pullToken } from 'redux/axiosHerokuInstance';
-
-// export const signUp = async user => {
-//   const { data } = await axiosInstance.post('/users/signup', user);
-//   pushToken(data.token);
-//   return data;
-// };
-
-// export const login = async user => {
-//   const { data } = await axiosInstance.post('/users/login', user);
-//   pushToken(data.token);
-//   return data;
-// };
-
-// export const logout = async () => {
-//   const { data } = await axiosInstance.post('/users/logout');
-//   pullToken();
-//   return data;
-// };
-
-// export const getUser = async () => {
-//   const { data } = await axiosInstance.get('/users/current');
-//   return data;
-// };
-
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
@@ -31,14 +6,53 @@ import {
   signOut,
 } from "firebase/auth";
 
-import { auth } from "../../config";
+import { auth, storage } from "../../config";
+import * as DocumentPicker from "expo-document-picker";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
-// або більш короткий запис цієї функції
-export const registerDB = async ({ email, password, login }) => {
+export const pickFile = async () => {
+  // выбор файла
+  try {
+    const res = await DocumentPicker.getDocumentAsync();
+    console.log(res.uri);
+    return res.uri;
+  } catch (err) {
+    console.log("Ошибка выбора файла: " + err);
+  }
+  return res;
+};
+
+export const getFileRef = async (photo, key) => {
+  // запись и чтение базы
+  const response = await fetch(photo);
+  const file = await response.blob();
+  const storageRef = ref(storage, `portraits/${key}`);
+  try {
+    const snapshot = await uploadBytes(storageRef, file);
+    console.log("Uploaded a blob or file! == ", snapshot);
+  } catch (error) {
+    console.log(error);
+  }
+  // Create a reference from a Google Cloud Storage URI
+  const gsReference = ref(
+    storage,
+    `gs://postsaboutphotos.appspot.com/portraits/${key}`
+  );
+  const res = await getDownloadURL(gsReference);
+  console.log("reference from a Google Cloud Storage URI == ", res);
+  return res;
+};
+
+export const registerDB = async ({ email, password, login, portrait }) => {
   await createUserWithEmailAndPassword(auth, email, password);
   const user = await auth.currentUser;
-  await updateProfile(user, { displayName: login });
+  if (portrait) {
+    const photoURL = await getFileRef(portrait, user.uid);
 
+    await updateProfile(user, { displayName: login, photoURL });
+  } else {
+    await updateProfile(user, { displayName: login });
+  }
   return user;
 
   // return user;
@@ -50,6 +64,17 @@ export const registerDB = async ({ email, password, login }) => {
   //"displayName": undefined, "email": "gg@gmail.com", "emailVerified": false, "isAnonymous": false,
   //"lastLoginAt": "1688596555303", "phoneNumber": undefined, "photoURL": undefined, "providerData": [Array],
   //"stsTokenManager": [Object], "tenantId": undefined, "uid": "j12MmxK3bjNa5CkxV7q8afAGaeU2"}}
+};
+
+export const updatePortrait = async (newPortrait) => {
+  const user = await auth.currentUser;
+  if (newPortrait) {
+    const photoURL = await getFileRef(newPortrait, user.uid);
+    await updateProfile(user, { photoURL });
+  } else {
+    await updateProfile(user, { photoURL: "" });
+  }
+  return user;
 };
 
 // туфта - ф топку
@@ -80,6 +105,5 @@ const updateUserProfile = async (update) => {
 
 export const signOut_ = async () => {
   await signOut(auth);
-
   console.log("signOut==");
 };

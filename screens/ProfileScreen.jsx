@@ -7,71 +7,36 @@ import {
   Image,
   TouchableWithoutFeedback,
 } from "react-native";
-import * as DocumentPicker from "expo-document-picker";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
-import { signOutThunk } from "../redux/authService/thunks";
-import { authSelector } from "../redux/stateSelectors";
-import { useState } from "react";
-import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
-import { storage } from "../config";
-import { setPhotoURL } from "../redux/authService/authSlice";
+import { signOutThunk, updateUserThunk } from "../redux/authService/thunks";
+import { authSelector, ownPostsSelector } from "../redux/stateSelectors";
+import { pickFile } from "../redux/authService/authOperations";
 
-export default ProfileScreen = () => {
+import { getOwnPosts } from "../redux/ownPostsService/ownPostsOperations";
+import { getOwnPostsThunk } from "../redux/ownPostsService/thunks";
+import { FlatList } from "react-native";
+import CardPost from "../components/CardPost";
+import { useEffect } from "react";
+
+export default ProfileScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const state = useSelector(authSelector);
+  const { ownPosts } = useSelector(ownPostsSelector);
 
-  const pickFile = async () => {
-    // выбор файла
-    try {
-      const res = await DocumentPicker.getDocumentAsync();
-      console.log(res.uri);
-      return res.uri;
-    } catch (err) {
-      console.log("Ошибка выбора файла: " + err);
-    }
-    return res;
+  useEffect(() => {
+    dispatch(getOwnPostsThunk(state.uid));
+  }, []);
 
-    // надо проводить через мутацию стора. подшить ссылку как displayName
-  };
-
-  const getFileRef = async (photo) => {
-    // запись и чтение базы
-    const response = await fetch(photo);
-    const file = await response.blob();
-    const storageRef = ref(storage, `portraits/${state.uid}`);
-
-    try {
-      const snapshot = await uploadBytes(storageRef, file);
-
-      console.log("Uploaded a blob or file! == ", snapshot);
-    } catch (error) {
-      console.log(error);
-    }
-
-    // download
-    // Create a reference from a Google Cloud Storage URI
-    const gsReference = ref(
-      storage,
-      `gs://postsaboutphotos.appspot.com/portraits/${state.uid}`
-    );
-
-    const res = await getDownloadURL(gsReference);
-    console.log("reference from a Google Cloud Storage URI == ", res);
-    return res;
-  };
-
-  const addPortret = async () => {
-    // сделать тоггл удаление-загрузка
+  const updatePortrait = async () => {
     if (state.photoURL) {
-      dispatch(setPhotoURL(""));
+      dispatch(updateUserThunk(""));
       return;
     }
     const filePath = await pickFile();
-    const profilePortraitGlobalUrl = await getFileRef(filePath);
-    dispatch(setPhotoURL(profilePortraitGlobalUrl));
+    dispatch(updateUserThunk(filePath));
   };
 
   return (
@@ -94,7 +59,7 @@ export default ProfileScreen = () => {
               <TouchableOpacity
                 style={styles.buttonAddPortrait}
                 activeOpacity={0.8}
-                onPress={addPortret}
+                onPress={updatePortrait}
               >
                 {!state.photoURL ? (
                   <MaterialIcons
@@ -115,7 +80,39 @@ export default ProfileScreen = () => {
               <Ionicons name="exit-outline" size={28} color="#BDBDBD" />
             </TouchableOpacity>
 
-            <Text style={styles.title}>{state.displayName}</Text>
+            <Text style={styles.title} onPress={() => {}}>
+              {state.displayName}
+            </Text>
+
+            {ownPosts.length > 0 && (
+              <FlatList
+                data={ownPosts}
+                keyExtractor={(item) => String(item.id)}
+                renderItem={({ item }) => {
+                  if (item) {
+                    return (
+                      <CardPost
+                        photo={item.data.photoURI}
+                        namePhoto={item.data.namePhoto}
+                        namePlace={item.data.namePlace}
+                        commentsCount={item.commentsCount}
+                        toMap={() => {
+                          navigation.navigate("mapPostsSubScreen", {
+                            location: item.data.location,
+                          });
+                        }}
+                        toComments={() => {
+                          navigation.navigate("commentsPostsSubScreen", {
+                            id: item.id,
+                            postPicture: item.data.photoURI,
+                          });
+                        }}
+                      />
+                    );
+                  }
+                }}
+              ></FlatList>
+            )}
           </View>
         </ImageBackground>
       </TouchableWithoutFeedback>

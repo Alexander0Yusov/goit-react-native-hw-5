@@ -24,6 +24,7 @@ export default CommentsSubScreen = ({ route }) => {
   const [comments, setComments] = useState([]);
   const { photoURL, uid } = useSelector(authSelector);
   const { id, postPicture } = route.params;
+  const [isFormActive, setIsFormActive] = useState(false);
 
   useEffect(() => {
     if (myComment === "") {
@@ -71,7 +72,7 @@ export default CommentsSubScreen = ({ route }) => {
     <TouchableWithoutFeedback
       onPress={() => {
         Keyboard.dismiss();
-        // setIsFormActive(false);
+        setIsFormActive(false);
       }}
     >
       <View style={styles.container}>
@@ -104,16 +105,14 @@ export default CommentsSubScreen = ({ route }) => {
         >
           <View style={styles.wrapInputPass}>
             <TextInput
-              style={[styles.inputPass, true && styles.focusedInput]}
+              style={[styles.inputPass, isFormActive && styles.focusedInput]}
               onFocus={() => {
-                // setIsPassFocus(true);
-                // setIsFormActive(true);
+                setIsFormActive(true);
               }}
               onBlur={() => {
-                // setIsPassFocus(false);
-                // setFieldTouched("password");
+                setIsFormActive(false);
               }}
-              placeholder="Ваш комментар"
+              placeholder="Ваш коментар"
               cursorColor={"black"}
               paddingLeft={16}
               value={myComment}
@@ -121,11 +120,18 @@ export default CommentsSubScreen = ({ route }) => {
             />
 
             <TouchableOpacity
-              style={styles.buttonShowPass}
+              style={styles.buttonSend}
               activeOpacity={0.8}
               onPress={onSendComment}
             >
-              <Text style={styles.buttonSlaveText}>{"Відправити"}</Text>
+              <Text
+                style={[
+                  styles.buttonSlaveText,
+                  myComment && { color: "#FF6C00" },
+                ]}
+              >
+                {"Відправити"}
+              </Text>
             </TouchableOpacity>
           </View>
         </KeyboardAvoidingView>
@@ -140,6 +146,8 @@ const styles = StyleSheet.create({
     justifyContent: "flex-start",
     backgroundColor: "#fff",
     alignItems: "center",
+    paddingLeft: 4,
+    paddingRight: 4,
     // justifyContent: "center",
     // borderWidth: 1,
     // borderColor: "red",
@@ -191,7 +199,7 @@ const styles = StyleSheet.create({
     fontFamily: "Roboto-400",
     color: "#212121",
   },
-  buttonShowPass: {
+  buttonSend: {
     position: "absolute",
     right: 0,
     paddingRight: 16,
@@ -200,6 +208,12 @@ const styles = StyleSheet.create({
 
     // borderWidth: 1,
     // borderColor: "red",
+  },
+  buttonSlaveText: {
+    fontSize: 16,
+    color: "#1B4371",
+    //#FF6C00
+    fontFamily: "Roboto-400",
   },
   focusedInput: {
     borderColor: "#FF6C00",

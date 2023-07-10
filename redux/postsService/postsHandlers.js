@@ -1,4 +1,6 @@
-export const handlerPending = state => {
+import { collection, getDocs } from "firebase/firestore";
+
+export const handlerPending = (state) => {
   state.isLoading = true;
 };
 
@@ -9,15 +11,30 @@ export const handlerRejected = (state, { payload }) => {
 };
 
 export const handlerFulfilledGet = (state, { payload }) => {
+  const arr = [];
+
+  const { data, countCommentsData } = payload;
+  data.forEach((doc) => {
+    arr.push({ id: doc.id, data: doc.data() });
+    // console.log(`${doc.id} =>`, doc.data());
+  });
+
+  const arrWithCounts = arr.map(({ id, data }) => {
+    const { commentsCount } = countCommentsData.find(
+      ({ id: id_ }) => id === id_
+    );
+    return { id, data, commentsCount };
+  });
+
   state.isLoading = false;
-  state.contacts = payload.data;
+  state.posts = arrWithCounts;
   state.error = null;
 };
 
 export const handlerFulfilledPost = (state, { payload }) => {
   state.isLoading = false;
-  console.log(payload);
-  state.contacts = state.contacts.concat([payload.data]);
+  // console.log("payload ", payload);
+  // state.posts = payload;
   state.error = null;
 };
 

@@ -41,6 +41,7 @@ export default LoginScreen = () => {
 
   const dispatch = useDispatch();
   const state = useSelector(authSelector);
+
   useEffect(() => {
     console.log("logScreen== ", state.email);
   }, [state.email]);
@@ -69,7 +70,7 @@ export default LoginScreen = () => {
           source={require("../assets/images/Photo-BG.jpg")}
         >
           <Formik
-            initialValues={{ mail: "rr@gmail.com", password: "aA2@aa" }}
+            initialValues={{ mail: "masjuk@gmail.com", password: "aA2@aa" }}
             validationSchema={SignupSchema}
             onSubmit={(values) => {
               const { login, mail, password } = values;

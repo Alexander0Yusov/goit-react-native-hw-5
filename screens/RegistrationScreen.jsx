@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   StyleSheet,
   View,
@@ -17,7 +17,7 @@ import { AntDesign } from "@expo/vector-icons";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { useNavigation } from "@react-navigation/native";
-import { registerDB } from "../redux/authService/authOperations";
+import { pickFile } from "../redux/authService/authOperations";
 import { useDispatch } from "react-redux";
 import { signUpThunk } from "../redux/authService/thunks";
 
@@ -42,6 +42,7 @@ export default RegistrationScreen = () => {
   const [isLoginFocus, setIsLoginFocus] = useState(false);
   const [isMailFocus, setIsMailFocus] = useState(false);
   const [isPassFocus, setIsPassFocus] = useState(false);
+  const [portrait, setPortrait] = useState("");
 
   const [isPasswordShow, setIsPasswordShow] = useState(false);
   const [isFormActive, setIsFormActive] = useState(false);
@@ -56,6 +57,15 @@ export default RegistrationScreen = () => {
   const toLoginPage = () => {
     console.log("goLoginPage");
     navigation.navigate("login");
+  };
+
+  const addPortret = async () => {
+    if (portrait) {
+      setPortrait("");
+      return;
+    }
+    const filePath = await pickFile();
+    setPortrait(filePath);
   };
 
   return (
@@ -78,7 +88,7 @@ export default RegistrationScreen = () => {
               const { login, mail, password } = values;
               console.log(JSON.stringify(values));
 
-              dispatch(signUpThunk({ email: mail, password, login }));
+              dispatch(signUpThunk({ email: mail, password, login, portrait }));
             }}
           >
             {({
@@ -99,11 +109,20 @@ export default RegistrationScreen = () => {
               >
                 <View style={[styles.form, isFormActive && { height: 380 }]}>
                   <View style={styles.imageThumb}>
+                    {portrait && (
+                      <Image
+                        style={styles.image}
+                        source={{
+                          uri: portrait,
+                        }}
+                      />
+                    )}
                     <TouchableOpacity
                       style={styles.buttonAddPortrait}
                       activeOpacity={0.8}
+                      onPress={addPortret}
                     >
-                      {true ? (
+                      {!portrait ? (
                         <MaterialIcons
                           name="add-circle-outline"
                           size={28}
@@ -273,6 +292,11 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     // borderColor: "red",
   },
+  image: {
+    width: "100%",
+    height: "100%",
+    borderRadius: 16,
+  },
   buttonAddPortrait: {
     position: "absolute",
     right: -13,
@@ -285,10 +309,7 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     // borderColor: "red",
   },
-  imagePortrait: {
-    width: "100%",
-    height: "100%",
-  },
+
   title: {
     marginTop: 90,
     marginBottom: 15,

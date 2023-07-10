@@ -11,6 +11,8 @@ import {
   PURGE,
   REGISTER,
 } from "redux-persist";
+import { postsReducer } from "./postsService/postsSlice";
+import { ownPostsReducer } from "./ownPostsService/ownPostsSlice";
 
 // import { persistStore, persistReducer } from 'redux-persist';
 // import storage from "redux-persist/lib/storage";
@@ -28,6 +30,8 @@ export const store = configureStore({
     // contactsCombine: contactsReducer,
     // filterCombine: filterReducer,
     authCombine: authReducer,
+    postsCombine: postsReducer,
+    ownPostsCombine: ownPostsReducer,
   },
   // лечит ошибки в консоли
   middleware: (getDefaultMiddleware) =>

@@ -7,17 +7,19 @@ import {
   FlatList,
 } from "react-native";
 import CardPost from "../components/CardPost";
-import { AntDesign } from "@expo/vector-icons";
 import { Feather } from "@expo/vector-icons";
-import { collection, getDocs } from "firebase/firestore";
-import { db } from "../config";
+import { useDispatch, useSelector } from "react-redux";
+import { signOutThunk } from "../redux/authService/thunks";
+import { postsSelector } from "../redux/stateSelectors";
+import { getPostsThunk } from "../redux/postsService/thunks";
 
-export default PostsScreen = ({ navigation, route }) => {
-  const [posts, setPosts] = useState([]);
+export default PostsScreen = ({ navigation }) => {
+  const { posts } = useSelector(postsSelector);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    getDataFromFirestore();
-    console.log("hi");
+    dispatch(getPostsThunk());
+    // console.log("hi");
   }, []);
 
   useEffect(() => {
@@ -38,31 +40,14 @@ export default PostsScreen = ({ navigation, route }) => {
           name="log-out"
           size={24}
           color="#BDBDBD"
-          onPress={() => console.log("Logout")}
+          onPress={() => dispatch(signOutThunk())}
         />
       ),
       headerRightContainerStyle: {
         marginRight: 20,
       },
     });
-  });
-
-  const getDataFromFirestore = async () => {
-    try {
-      const snapshot = await getDocs(collection(db, "posts"));
-      const arr = [];
-
-      snapshot.forEach((doc) => {
-        arr.push({ id: doc.id, data: doc.data() });
-        // console.log(`${doc.id} =>`, doc.data());
-      });
-      setPosts(arr);
-      return arr;
-    } catch (error) {
-      console.log(error);
-      throw error;
-    }
-  };
+  }, []);
 
   const toMapScreen = () => {
     navigation.navigate("mapPostsSubScreen");
@@ -103,6 +88,7 @@ export default PostsScreen = ({ navigation, route }) => {
                   photo={item.data.photoURI}
                   namePhoto={item.data.namePhoto}
                   namePlace={item.data.namePlace}
+                  commentsCount={item.commentsCount}
                   toMap={() => {
                     navigation.navigate("mapPostsSubScreen", {
                       location: item.data.location,

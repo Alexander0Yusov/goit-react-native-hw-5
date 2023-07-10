@@ -56,13 +56,19 @@ import { createSlice, isAnyOf } from "@reduxjs/toolkit";
 // // export const filterReducer = filterSlice.reducer;
 // export const { setError } = authSlice.actions;
 
-import { loginThunk, signUpThunk, signOutThunk } from "./thunks";
+import {
+  loginThunk,
+  signUpThunk,
+  signOutThunk,
+  updateUserThunk,
+} from "./thunks";
 
 import {
   pendingHandler,
   rejectedHandler,
   loginFulfilledHandler,
   signOutFulfilledHandler,
+  updateUserFulfilledHandler,
 
   //   getUserFulfilledHandler,
 } from "./authHandlers";
@@ -97,16 +103,23 @@ const authSlice = createSlice({
       .addCase(signUpThunk.fulfilled, loginFulfilledHandler)
       .addCase(loginThunk.fulfilled, loginFulfilledHandler)
       .addCase(signOutThunk.fulfilled, signOutFulfilledHandler)
+      .addCase(updateUserThunk.fulfilled, updateUserFulfilledHandler)
 
       .addMatcher(
-        isAnyOf(signUpThunk.pending, loginThunk.pending, signOutThunk.pending),
+        isAnyOf(
+          signUpThunk.pending,
+          loginThunk.pending,
+          signOutThunk.pending,
+          updateUserThunk.pending
+        ),
         pendingHandler
       )
       .addMatcher(
         isAnyOf(
           signUpThunk.rejected,
           loginThunk.rejected,
-          signOutThunk.rejected
+          signOutThunk.rejected,
+          updateUserThunk.rejected
         ),
         rejectedHandler
       );

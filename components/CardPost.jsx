@@ -7,6 +7,7 @@ export default CardPost = ({
   photo,
   namePhoto,
   namePlace,
+  commentsCount,
   toMap,
   toComments,
 }) => {
@@ -23,7 +24,7 @@ export default CardPost = ({
           onPress={toComments}
         >
           <FontAwesome name="comment-o" size={24} color="#BDBDBD" />
-          <Text style={styles.locationText}>{"25"}</Text>
+          <Text style={styles.locationText}>{commentsCount}</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -77,6 +78,8 @@ const styles = StyleSheet.create({
     width: "20%",
     marginRight: "auto",
     justifyContent: "center",
+    // borderWidth: 1,
+    // borderColor: "green",
   },
   buttonMap: {
     flexDirection: "row",

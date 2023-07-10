@@ -15,12 +15,10 @@ import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import * as Location from "expo-location";
 import { HeaderBackButton } from "@react-navigation/elements";
-import { db, storage } from "../config";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { useDispatch, useSelector } from "react-redux";
 import { authSelector } from "../redux/stateSelectors";
-import shortid from "shortid";
-import { addDoc, collection } from "firebase/firestore";
+import { postPostThunk } from "../redux/postsService/thunks";
+import { getFileRef } from "../redux/authService/authOperations";
 
 export default CreatePostScreen = ({ navigation }) => {
   const [cameraRef, setCameraRef] = useState(null);
@@ -81,7 +79,6 @@ export default CreatePostScreen = ({ navigation }) => {
       setPhoto("");
       return;
     }
-
     const snap = await cameraRef.takePictureAsync();
     const point = await Location.getCurrentPositionAsync();
     const { latitude, longitude } = point.coords;
@@ -96,56 +93,20 @@ export default CreatePostScreen = ({ navigation }) => {
   };
 
   const handleSubmit = async () => {
-    const formData = { photo, namePhoto, namePlace, location };
     setInputIsActive(false);
     navigation.navigate("basePostsSubScreen");
-    const photoRefResult = await getPotoRef();
-    await writeDataToFirestore(photoRefResult);
-    resetForm();
-  };
-
-  const getPotoRef = async () => {
-    const response = await fetch(photo);
-    const file = await response.blob();
-    const newId = shortid.generate();
-
-    // create a ref
-    const storageRef = ref(storage, `sights/${newId}`);
-
-    // upload to db
-    try {
-      const snapshot = await uploadBytes(storageRef, file);
-      // console.log("Uploaded a blob or file! == ", snapshot);
-    } catch (error) {
-      console.log(error);
-    }
-
-    // create a ref from a Google Cloud Storage URI
-    const gsReference = ref(
-      storage,
-      `gs://postsaboutphotos.appspot.com/sights/${newId}`
-    );
-
-    const res = await getDownloadURL(gsReference);
-    // console.log("reference from a Google Cloud Storage URI == ", res);
-    return res;
-  };
-
-  const writeDataToFirestore = async (photoURI) => {
-    try {
-      const docRef = await addDoc(collection(db, "posts"), {
-        photoURI,
+    const photoRefResult = await getFileRef(photo, uid);
+    dispatch(
+      postPostThunk({
+        photoURI: photoRefResult,
         location,
         namePhoto,
         namePlace,
         uid,
         displayName,
-      });
-      console.log("Document written with ID: ", docRef.id);
-    } catch (e) {
-      console.error("Error adding document: ", e);
-      throw e;
-    }
+      })
+    );
+    resetForm();
   };
 
   return (
