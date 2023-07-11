@@ -19,6 +19,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { authSelector } from "../redux/stateSelectors";
 import { postPostThunk } from "../redux/postsService/thunks";
 import { getFileRef } from "../redux/authService/authOperations";
+import shortid from "shortid";
 
 export default CreatePostScreen = ({ navigation }) => {
   const [cameraRef, setCameraRef] = useState(null);
@@ -95,7 +96,8 @@ export default CreatePostScreen = ({ navigation }) => {
   const handleSubmit = async () => {
     setInputIsActive(false);
     navigation.navigate("basePostsSubScreen");
-    const photoRefResult = await getFileRef(photo, uid);
+    const key = shortid.generate();
+    const photoRefResult = await getFileRef(photo, key, "sights");
     dispatch(
       postPostThunk({
         photoURI: photoRefResult,
@@ -130,7 +132,7 @@ export default CreatePostScreen = ({ navigation }) => {
 
         {!inputIsActive && (
           <Text style={styles.title}>
-            {!photo ? "Завантажте фото" : ' "Зробити знімок" - видалити фото'}
+            {!photo ? "Завантажте фото" : "Новий клік видалить фото"}
           </Text>
         )}
 
@@ -206,8 +208,8 @@ const styles = StyleSheet.create({
     overflow: "hidden",
     backgroundColor: "#E8E8E8",
 
-    borderWidth: 1,
-    borderColor: "red",
+    // borderWidth: 1,
+    // borderColor: "red",
   },
   camera: {
     position: "relative",
@@ -243,16 +245,20 @@ const styles = StyleSheet.create({
     height: 50,
     width: "100%",
     fontSize: 16,
-    borderWidth: 1,
-    borderColor: "red",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e8e8e8",
+    // borderWidth: 1,
+    // borderColor: "red",
   },
   inputNamePlace: {
     marginTop: 30,
     height: 50,
     width: "100%",
     fontSize: 16,
-    borderWidth: 1,
-    borderColor: "red",
+    borderBottomWidth: 1,
+    borderBottomColor: "#e8e8e8",
+    // borderWidth: 1,
+    // borderColor: "red",
   },
   buttonMaster: {
     marginTop: 44,

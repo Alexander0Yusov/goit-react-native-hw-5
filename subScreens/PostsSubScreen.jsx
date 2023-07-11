@@ -19,7 +19,7 @@ export default PostsScreen = ({ navigation }) => {
 
   useEffect(() => {
     dispatch(getPostsThunk());
-    // console.log("hi");
+    console.log("useEffect posts ");
   }, []);
 
   useEffect(() => {

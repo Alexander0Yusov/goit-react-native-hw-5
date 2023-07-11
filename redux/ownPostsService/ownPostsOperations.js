@@ -14,10 +14,7 @@ import { db } from "../../config";
 export const getOwnPosts = async (uid) => {
   // Firebase SDK версии 9 (Firebase Modular SDK)
   const citiesRef = collection(db, "posts");
-  const q = query(
-    citiesRef,
-    where("uid", "==", "S8RYg7cLLwWJNGsrbR1nSNKhgfI3")
-  );
+  const q = query(citiesRef, where("uid", "==", uid));
   const querySnapshot = await getDocs(q);
   const arr = [];
   querySnapshot.forEach((doc) => {

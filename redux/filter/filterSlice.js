@@ -1,10 +1,11 @@
-import { createSlice } from '@reduxjs/toolkit';
+// этот файл в проекте для примера работы с синхронным редаксом
+import { createSlice } from "@reduxjs/toolkit";
 
 export const filterSlice = createSlice({
-  name: 'filter',
+  name: "filter",
 
   initialState: {
-    filter: '',
+    filter: "",
     selectedUser: null,
   },
 

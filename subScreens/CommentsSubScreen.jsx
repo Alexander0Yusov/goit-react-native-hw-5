@@ -14,58 +14,32 @@ import {
 import CardComment from "../components/CardComment";
 import CardOwnComment from "../components/CardOwnComment";
 import { useEffect, useState } from "react";
-import { addDoc, collection, doc, set, add, getDocs } from "firebase/firestore";
-import { db } from "../config";
-import { useSelector } from "react-redux";
-import { authSelector } from "../redux/stateSelectors";
+import { useDispatch, useSelector } from "react-redux";
+import { authSelector, commentsSelector } from "../redux/stateSelectors";
+import {
+  getCommentsThunk,
+  postCommentThunk,
+} from "../redux/commentsSlice/commentsThunks";
 
 export default CommentsSubScreen = ({ route }) => {
-  const [myComment, setMyComment] = useState("");
-  const [comments, setComments] = useState([]);
-  const { photoURL, uid } = useSelector(authSelector);
   const { id, postPicture } = route.params;
+  const [myComment, setMyComment] = useState("");
   const [isFormActive, setIsFormActive] = useState(false);
 
+  const dispatch = useDispatch();
+  const { photoURL, uid } = useSelector(authSelector);
+  const { comments } = useSelector(commentsSelector);
+
   useEffect(() => {
-    if (myComment === "") {
-      getAllCommentsToPost();
-      console.log("comments  ", comments);
-    }
-  }, [myComment]);
+    dispatch(getCommentsThunk(id));
+    console.log("useEffect comments ");
+  }, []);
 
-  const onSendComment = async () => {
+  const onSendComment = () => {
     if (!myComment) return;
-    try {
-      const docRef = await doc(db, "posts", id);
-      const comment = {
-        date: new Date().toLocaleDateString("uk-UA"),
-        time: new Date().toLocaleTimeString("uk-UA"),
-        comment: myComment,
-        photoURL,
-        uid,
-      };
-
-      await addDoc(collection(docRef, "comments"), comment);
-      setMyComment("");
-    } catch (e) {
-      console.error("Error adding document: ", e);
-      throw e;
-    }
+    dispatch(postCommentThunk({ id, myComment, photoURL, uid }));
     setMyComment("");
-  };
-
-  const getAllCommentsToPost = async () => {
-    // Query a reference to a subcollection
-    const querySnapshot = await getDocs(
-      collection(db, "posts", `${id}`, "comments")
-    );
-    const arr = [];
-    querySnapshot.forEach((doc) => {
-      // doc.data() is never undefined for query doc snapshots
-      arr.push({ id: doc.id, data: doc.data() });
-      console.log(doc.id, " => ", doc.data());
-    });
-    setComments(arr);
+    Keyboard.dismiss();
   };
 
   return (
@@ -79,7 +53,7 @@ export default CommentsSubScreen = ({ route }) => {
         <View style={styles.thumb}>
           <Image style={styles.image} source={{ uri: postPicture }} />
         </View>
-        {comments.length > 0 && (
+        {comments && (
           <FlatList
             data={comments}
             keyExtractor={(item) => String(item.id)}
@@ -92,12 +66,6 @@ export default CommentsSubScreen = ({ route }) => {
             }}
           ></FlatList>
         )}
-
-        {/* <View style={{ marginBottom: "auto" }}>
-          {comments.length > 0 && <CardComment text="sometext" />}
-          <CardOwnComment text="sometext" />
-          <CardComment text="sometext" />
-        </View> */}
 
         <KeyboardAvoidingView
           style={{ width: "100%" }}

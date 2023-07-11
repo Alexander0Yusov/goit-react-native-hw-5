@@ -16,11 +16,13 @@ export default function Main() {
 
   useEffect(() => {
     onAuthStateChanged(auth, (userUpd) => {
-      if (userUpd) {
-        console.log("uid== ", uid);
-        // dispatch(setUser(userUpd));
+      if (userUpd && !uid) {
+        // console.log("uid== ", uid);
+        // console.log("userUpd== ", userUpd);
+        dispatch(setUser(userUpd));
       } else {
-        console.log("User is signed out");
+        !uid && console.log("User is signed out");
+        uid && console.log("User is signed up");
       }
     });
   }, []);

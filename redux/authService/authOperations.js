@@ -9,6 +9,7 @@ import {
 import { auth, storage } from "../../config";
 import * as DocumentPicker from "expo-document-picker";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
+import shortid from "shortid";
 
 export const pickFile = async () => {
   // выбор файла
@@ -22,24 +23,24 @@ export const pickFile = async () => {
   return res;
 };
 
-export const getFileRef = async (photo, key) => {
+export const getFileRef = async (photo, key, path) => {
   // запись и чтение базы
   const response = await fetch(photo);
   const file = await response.blob();
-  const storageRef = ref(storage, `portraits/${key}`);
+  const storageRef = ref(storage, `${path}/${key}`);
   try {
     const snapshot = await uploadBytes(storageRef, file);
-    console.log("Uploaded a blob or file! == ", snapshot);
+    // console.log("Uploaded a blob or file! == ", snapshot);
   } catch (error) {
     console.log(error);
   }
   // Create a reference from a Google Cloud Storage URI
   const gsReference = ref(
     storage,
-    `gs://postsaboutphotos.appspot.com/portraits/${key}`
+    `gs://postsaboutphotos.appspot.com/${path}/${key}`
   );
   const res = await getDownloadURL(gsReference);
-  console.log("reference from a Google Cloud Storage URI == ", res);
+  // console.log("reference from a Google Cloud Storage URI == ", res);
   return res;
 };
 
@@ -47,7 +48,7 @@ export const registerDB = async ({ email, password, login, portrait }) => {
   await createUserWithEmailAndPassword(auth, email, password);
   const user = await auth.currentUser;
   if (portrait) {
-    const photoURL = await getFileRef(portrait, user.uid);
+    const photoURL = await getFileRef(portrait, user.uid, "portraits");
 
     await updateProfile(user, { displayName: login, photoURL });
   } else {
@@ -69,7 +70,8 @@ export const registerDB = async ({ email, password, login, portrait }) => {
 export const updatePortrait = async (newPortrait) => {
   const user = await auth.currentUser;
   if (newPortrait) {
-    const photoURL = await getFileRef(newPortrait, user.uid);
+    const key = shortid.generate();
+    const photoURL = await getFileRef(newPortrait, key, "portraits");
     await updateProfile(user, { photoURL });
   } else {
     await updateProfile(user, { photoURL: "" });
@@ -105,5 +107,5 @@ const updateUserProfile = async (update) => {
 
 export const signOut_ = async () => {
   await signOut(auth);
-  console.log("signOut==");
+  console.log("signOut operation");
 };

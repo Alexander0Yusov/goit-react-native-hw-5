@@ -62,7 +62,7 @@ const optionsPostsSubScreen = {
       style={{
         height: 4,
         width: 120,
-        backgroundColor: focused ? "#212121" : "transparent",
+        backgroundColor: focused ? "#212121aa" : "transparent",
         marginBottom: 4,
       }}
     ></View>
@@ -119,7 +119,7 @@ const optionsCreatePostScreen = {
         top: 54,
         height: 4,
         width: 120,
-        backgroundColor: focused ? "#212121" : "transparent",
+        backgroundColor: focused ? "#212121aa" : "transparent",
         marginBottom: 4,
       }}
     ></View>
@@ -150,7 +150,7 @@ const optionsProfileScreen = {
       style={{
         height: 4,
         width: 120,
-        backgroundColor: focused ? "#212121" : "transparent",
+        backgroundColor: focused ? "#212121aa" : "transparent",
         marginBottom: 4,
       }}
     ></View>

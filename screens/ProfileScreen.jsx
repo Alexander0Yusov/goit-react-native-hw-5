@@ -28,6 +28,7 @@ export default ProfileScreen = ({ navigation }) => {
 
   useEffect(() => {
     dispatch(getOwnPostsThunk(state.uid));
+    console.log("useEffect profile ");
   }, []);
 
   const updatePortrait = async () => {

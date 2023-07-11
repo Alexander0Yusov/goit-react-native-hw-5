@@ -94,7 +94,10 @@ const authSlice = createSlice({
     },
     setUser: (state, action) => {
       const { uid, displayName, email, photoURL } = action.payload;
-      state = { ...state, uid, displayName, email, photoURL };
+      state.uid = uid;
+      state.displayName = displayName;
+      state.email = email;
+      state.photoURL = photoURL;
       console.log("action.payload static", action.payload);
     },
   },

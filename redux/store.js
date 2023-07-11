@@ -13,6 +13,7 @@ import {
 } from "redux-persist";
 import { postsReducer } from "./postsService/postsSlice";
 import { ownPostsReducer } from "./ownPostsService/ownPostsSlice";
+import { commentsReducer } from "./commentsSlice/commentsSlice";
 
 // import { persistStore, persistReducer } from 'redux-persist';
 // import storage from "redux-persist/lib/storage";
@@ -32,6 +33,7 @@ export const store = configureStore({
     authCombine: authReducer,
     postsCombine: postsReducer,
     ownPostsCombine: ownPostsReducer,
+    commentsCombine: commentsReducer,
   },
   // лечит ошибки в консоли
   middleware: (getDefaultMiddleware) =>

@@ -47,7 +47,7 @@ export const loginFulfilledHandler = (state, { payload }) => {
   state.photoURL = payload.photoURL;
   state.isLoading = false;
   state.error = null;
-  console.log("login fulfilled handler == ", payload);
+  // console.log("login fulfilled handler == ", payload);
 };
 
 export const signOutFulfilledHandler = (state) => {
@@ -57,12 +57,12 @@ export const signOutFulfilledHandler = (state) => {
   state.photoURL = "";
   state.isLoading = false;
   state.error = null;
-  console.log("signOut Fulfilled Handler == ", state);
+  // console.log("signOut Fulfilled Handler == ", state);
 };
 
 export const updateUserFulfilledHandler = (state, { payload }) => {
   state.isLoading = false;
   state.error = null;
   state.photoURL = payload.photoURL;
-  console.log("update User Fulfilled Handler == ", payload);
+  // console.log("update User Fulfilled Handler == ", payload);
 };
