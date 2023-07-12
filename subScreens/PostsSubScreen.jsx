@@ -10,17 +10,18 @@ import CardPost from "../components/CardPost";
 import { Feather } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { signOutThunk } from "../redux/authService/thunks";
-import { postsSelector } from "../redux/stateSelectors";
+import { postsSelector, triggerSelector } from "../redux/stateSelectors";
 import { getPostsThunk } from "../redux/postsService/thunks";
 
 export default PostsScreen = ({ navigation }) => {
   const { posts } = useSelector(postsSelector);
+  const { trigger } = useSelector(triggerSelector);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getPostsThunk());
-    console.log("useEffect posts ");
-  }, []);
+    console.log("useEffect posts ", trigger);
+  }, [trigger]);
 
   useEffect(() => {
     navigation.setOptions({
@@ -49,34 +50,8 @@ export default PostsScreen = ({ navigation }) => {
     });
   }, []);
 
-  const toMapScreen = () => {
-    navigation.navigate("mapPostsSubScreen");
-  };
-
-  const toCommentsScreen = () => {
-    navigation.navigate("commentsPostsSubScreen");
-  };
-
   return (
     <View style={styles.container}>
-      {false && (
-        // этот блок в топку
-        <>
-          <Text style={styles.title}>Posts Screen</Text>
-          <TouchableOpacity
-            style={{ borderWidth: 1, borderColor: "red", marginBottom: 12 }}
-            onPress={toMapScreen}
-          >
-            <Text style={{ fontSize: 24 }}>Go to Map screen</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            style={{ borderWidth: 1, borderColor: "red" }}
-            onPress={toCommentsScreen}
-          >
-            <Text style={{ fontSize: 24 }}>Go to Comments screen</Text>
-          </TouchableOpacity>
-        </>
-      )}
       {posts.length > 0 && (
         <FlatList
           data={posts}

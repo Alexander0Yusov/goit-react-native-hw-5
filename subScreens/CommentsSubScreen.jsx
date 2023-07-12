@@ -15,11 +15,17 @@ import CardComment from "../components/CardComment";
 import CardOwnComment from "../components/CardOwnComment";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { authSelector, commentsSelector } from "../redux/stateSelectors";
+import {
+  authSelector,
+  commentsSelector,
+  triggerSelector,
+} from "../redux/stateSelectors";
 import {
   getCommentsThunk,
   postCommentThunk,
 } from "../redux/commentsSlice/commentsThunks";
+import { setTrigger } from "../redux/triggerSlice/triggerSlice";
+import shortid from "shortid";
 
 export default CommentsSubScreen = ({ route }) => {
   const { id, postPicture } = route.params;
@@ -29,17 +35,20 @@ export default CommentsSubScreen = ({ route }) => {
   const dispatch = useDispatch();
   const { photoURL, uid } = useSelector(authSelector);
   const { comments } = useSelector(commentsSelector);
+  const { trigger } = useSelector(triggerSelector);
 
   useEffect(() => {
     dispatch(getCommentsThunk(id));
     console.log("useEffect comments ");
-  }, []);
+  }, [trigger]);
 
   const onSendComment = () => {
     if (!myComment) return;
     dispatch(postCommentThunk({ id, myComment, photoURL, uid }));
     setMyComment("");
     Keyboard.dismiss();
+    const key = shortid.generate();
+    dispatch(setTrigger(key));
   };
 
   return (
@@ -58,11 +67,25 @@ export default CommentsSubScreen = ({ route }) => {
             data={comments}
             keyExtractor={(item) => String(item.id)}
             renderItem={({ item: { data } }) => {
-              const { comment, uid: uid_, photoURL } = data;
+              const { date, time, comment, uid: uid_, photoURL } = data;
               if (uid_ !== uid) {
-                return <CardComment text={`${comment}`} portrait={photoURL} />;
+                return (
+                  <CardComment
+                    date={date}
+                    time={time}
+                    text={comment}
+                    portrait={photoURL}
+                  />
+                );
               }
-              return <CardOwnComment text={`${comment}`} portrait={photoURL} />;
+              return (
+                <CardOwnComment
+                  date={date}
+                  time={time}
+                  text={comment}
+                  portrait={photoURL}
+                />
+              );
             }}
           ></FlatList>
         )}

@@ -33,7 +33,7 @@ export const handlerFulfilledGet = (state, { payload }) => {
 
 export const handlerFulfilledPost = (state, { payload }) => {
   state.isLoading = false;
-  // console.log("payload ", payload);
+  // console.log("payload post  ", payload);
   // state.posts = payload;
   state.error = null;
 };

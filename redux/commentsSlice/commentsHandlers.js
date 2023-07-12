@@ -10,11 +10,14 @@ export const commentsHandlerRejected = (state, { payload }) => {
 
 export const commentsGetHandlerFulfilled = (state, { payload }) => {
   state.isLoading = false;
-  state.comments = payload;
+  state.comments = [...payload].sort(
+    ({ data: { number } }, { data: { number: number_ } }) => number - number_
+  );
   state.error = null;
 };
 
 export const commentPostHandlerFulfilled = (state, { payload }) => {
   state.isLoading = false;
   state.error = null;
+  // console.log("payload comment  ", payload);
 };

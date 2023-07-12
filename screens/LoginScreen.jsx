@@ -24,11 +24,11 @@ const SignupSchema = Yup.object().shape({
     .email("Invalid email")
     .required("Enter Your email, please!"),
   password: Yup.string()
-    .min(4)
+    .min(6)
     .required("Enter Your password, please!")
     .matches(
       /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{4,}$/,
-      "Min: 4 symbols, one uppercase letter, one lowercase letter, one number, one special symbol"
+      "Min: 6 symbols, one uppercase letter, one lowercase letter, one number, one special symbol"
     ),
 });
 

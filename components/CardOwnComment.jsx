@@ -4,10 +4,13 @@ import { Feather } from "@expo/vector-icons";
 import { FontAwesome } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 
-export default CardOwnComment = ({ text, portrait }) => {
+export default CardOwnComment = ({ text, portrait, date, time }) => {
   return (
     <View style={styles.wrap}>
-      <Text style={styles.title}>{text}</Text>
+      <View style={styles.textWrap}>
+        <Text style={styles.title}>{text}</Text>
+        <Text style={styles.time}>{`${date}   ${time}`}</Text>
+      </View>
 
       <View style={styles.thumb}>
         {portrait && (
@@ -35,6 +38,14 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     // borderColor: "blue",
   },
+
+  textWrap: {
+    width: "85%",
+    paddingLeft: 12,
+    paddingRight: 12,
+    backgroundColor: "#E8E8E8",
+    borderRadius: 12,
+  },
   thumb: {
     width: 30,
     height: 30,
@@ -50,12 +61,14 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   title: {
-    width: "85%",
     fontSize: 16,
-    paddingLeft: 12,
-    paddingRight: 12,
+    // borderWidth: 1,
+    // borderColor: "yellow",
+  },
+  time: {
+    fontSize: 12,
     backgroundColor: "#E8E8E8",
-    borderRadius: 12,
+    alignSelf: "flex-end",
     // borderWidth: 1,
     // borderColor: "yellow",
   },

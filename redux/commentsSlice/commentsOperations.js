@@ -28,6 +28,7 @@ export const getCommentsById = async (id_) => {
 export const postComment = async ({ id, myComment, photoURL, uid }) => {
   const docRef = await doc(db, "posts", id);
   const comment = await {
+    number: Date.now(),
     date: new Date().toLocaleDateString("uk-UA"),
     time: new Date().toLocaleTimeString("uk-UA"),
     comment: myComment,
@@ -35,7 +36,7 @@ export const postComment = async ({ id, myComment, photoURL, uid }) => {
     uid,
   };
 
-  console.log("com ", comment);
+  // console.log("com ", comment);
 
   await addDoc(collection(docRef, "comments"), comment);
 };

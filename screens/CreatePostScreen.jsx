@@ -20,6 +20,7 @@ import { authSelector } from "../redux/stateSelectors";
 import { postPostThunk } from "../redux/postsService/thunks";
 import { getFileRef } from "../redux/authService/authOperations";
 import shortid from "shortid";
+import { setTrigger } from "../redux/triggerSlice/triggerSlice";
 
 export default CreatePostScreen = ({ navigation }) => {
   const [cameraRef, setCameraRef] = useState(null);
@@ -95,8 +96,8 @@ export default CreatePostScreen = ({ navigation }) => {
 
   const handleSubmit = async () => {
     setInputIsActive(false);
-    navigation.navigate("basePostsSubScreen");
     const key = shortid.generate();
+    navigation.navigate("basePostsSubScreen");
     const photoRefResult = await getFileRef(photo, key, "sights");
     dispatch(
       postPostThunk({
@@ -109,6 +110,7 @@ export default CreatePostScreen = ({ navigation }) => {
       })
     );
     resetForm();
+    dispatch(setTrigger(key));
   };
 
   return (
