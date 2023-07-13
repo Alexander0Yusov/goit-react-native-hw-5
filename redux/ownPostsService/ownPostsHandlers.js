@@ -23,6 +23,8 @@ export const handlerFulfilledGet = (state, { payload }) => {
   });
 
   state.isLoading = false;
-  state.ownPosts = arrWithCounts;
+  state.ownPosts = [...arrWithCounts].sort(
+    ({ data: { number } }, { data: { number: number_ } }) => number_ - number
+  );
   state.error = null;
 };

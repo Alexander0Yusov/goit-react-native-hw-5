@@ -23,7 +23,12 @@ export default CardPost = ({
           activeOpacity={0.8}
           onPress={toComments}
         >
-          <FontAwesome name="comment-o" size={24} color="#BDBDBD" />
+          {!Boolean(commentsCount) && (
+            <FontAwesome name="comment-o" size={24} color="#BDBDBD" />
+          )}
+          {Boolean(commentsCount) && (
+            <FontAwesome name="comment" size={24} color="#FF6C00" />
+          )}
           <Text style={styles.locationText}>{commentsCount}</Text>
         </TouchableOpacity>
 

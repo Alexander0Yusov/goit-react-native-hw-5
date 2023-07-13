@@ -101,6 +101,7 @@ export default CreatePostScreen = ({ navigation }) => {
     const photoRefResult = await getFileRef(photo, key, "sights");
     dispatch(
       postPostThunk({
+        number: Date.now(),
         photoURI: photoRefResult,
         location,
         namePhoto,
@@ -123,12 +124,13 @@ export default CreatePostScreen = ({ navigation }) => {
       <View style={styles.container}>
         {!inputIsActive && (
           <View style={styles.thumb}>
-            <Camera style={styles.camera} ref={setCameraRef}>
-              {photo && <Image source={{ uri: photo }} style={styles.image} />}
-              <TouchableOpacity style={styles.photoButton} onPress={onSnap}>
-                <MaterialIcons name="photo-camera" size={24} color="#BDBDBD" />
-              </TouchableOpacity>
-            </Camera>
+            {photo && <Image source={{ uri: photo }} style={styles.image} />}
+            {!photo && (
+              <Camera style={styles.camera} ref={setCameraRef}></Camera>
+            )}
+            <TouchableOpacity style={styles.photoButton} onPress={onSnap}>
+              <MaterialIcons name="photo-camera" size={24} color="#BDBDBD" />
+            </TouchableOpacity>
           </View>
         )}
 
@@ -206,6 +208,8 @@ const styles = StyleSheet.create({
   thumb: {
     height: 300,
     width: "100%",
+    // justifyContent: "center",
+    alignItems: "center",
     borderRadius: 8,
     overflow: "hidden",
     backgroundColor: "#E8E8E8",

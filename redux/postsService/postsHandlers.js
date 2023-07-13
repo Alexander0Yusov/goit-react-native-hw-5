@@ -19,12 +19,16 @@ export const handlerFulfilledGet = (state, { payload }) => {
     // console.log(`${doc.id} =>`, doc.data());
   });
 
-  const arrWithCounts = arr.map(({ id, data }) => {
-    const { commentsCount } = countCommentsData.find(
-      ({ id: id_ }) => id === id_
+  const arrWithCounts = arr
+    .map(({ id, data }) => {
+      const { commentsCount } = countCommentsData.find(
+        ({ id: id_ }) => id === id_
+      );
+      return { id, data, commentsCount };
+    })
+    .sort(
+      ({ data: { number } }, { data: { number: number_ } }) => number_ - number
     );
-    return { id, data, commentsCount };
-  });
 
   state.isLoading = false;
   state.posts = arrWithCounts;

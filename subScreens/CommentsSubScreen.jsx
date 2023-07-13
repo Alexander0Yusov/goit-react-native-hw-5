@@ -13,6 +13,7 @@ import {
 } from "react-native";
 import CardComment from "../components/CardComment";
 import CardOwnComment from "../components/CardOwnComment";
+import { Ionicons } from "@expo/vector-icons";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -94,9 +95,9 @@ export default CommentsSubScreen = ({ route }) => {
           style={{ width: "100%" }}
           behavior={Platform.OS == "ios" ? "padding" : "height"}
         >
-          <View style={styles.wrapInputPass}>
+          <View style={styles.wrapInput}>
             <TextInput
-              style={[styles.inputPass, isFormActive && styles.focusedInput]}
+              style={[styles.input, isFormActive && styles.focusedInput]}
               onFocus={() => {
                 setIsFormActive(true);
               }}
@@ -121,7 +122,8 @@ export default CommentsSubScreen = ({ route }) => {
                   myComment && { color: "#FF6C00" },
                 ]}
               >
-                {"Відправити"}
+                {false && "Відправити"}
+                <Ionicons name="arrow-up-circle" size={34} />
               </Text>
             </TouchableOpacity>
           </View>
@@ -168,7 +170,7 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     // borderColor: "blue",
   },
-  wrapInputPass: {
+  wrapInput: {
     position: "relative",
     width: "100%",
     height: 50,
@@ -179,13 +181,14 @@ const styles = StyleSheet.create({
     // borderWidth: 1,
     // borderColor: "green",
   },
-  inputPass: {
+  input: {
     height: 50,
     width: "100%",
+    paddingRight: 80,
     fontSize: 16,
     borderWidth: 1,
     borderColor: "#E8E8E8",
-    borderRadius: 8,
+    borderRadius: 25,
     backgroundColor: "#F6F6F6",
     fontFamily: "Roboto-400",
     color: "#212121",
@@ -193,7 +196,7 @@ const styles = StyleSheet.create({
   buttonSend: {
     position: "absolute",
     right: 0,
-    paddingRight: 16,
+    paddingRight: 12,
     height: 50,
     justifyContent: "center",
 
@@ -203,8 +206,10 @@ const styles = StyleSheet.create({
   buttonSlaveText: {
     fontSize: 16,
     color: "#1B4371",
-    //#FF6C00
     fontFamily: "Roboto-400",
+
+    // borderWidth: 1,
+    // borderColor: "red",
   },
   focusedInput: {
     borderColor: "#FF6C00",
