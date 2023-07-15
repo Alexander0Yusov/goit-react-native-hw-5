@@ -36,7 +36,10 @@ export const postComment = async ({ id, myComment, photoURL, uid }) => {
     uid,
   };
 
-  // console.log("com ", comment);
+  const commentRef = await addDoc(collection(docRef, "comments"), comment);
 
-  await addDoc(collection(docRef, "comments"), comment);
+  const doc_ = await getDoc(commentRef);
+
+  // console.log("comment ", doc_.id, "===", doc_.data());
+  return { id: doc_.id, data: doc_.data() };
 };

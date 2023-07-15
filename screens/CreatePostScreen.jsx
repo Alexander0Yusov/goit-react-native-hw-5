@@ -111,7 +111,7 @@ export default CreatePostScreen = ({ navigation }) => {
       })
     );
     resetForm();
-    dispatch(setTrigger(key));
+    // dispatch(setTrigger(key));
   };
 
   return (

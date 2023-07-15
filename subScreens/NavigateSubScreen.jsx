@@ -14,13 +14,19 @@ export default NavigateSubScreen = () => {
         component={PostsSubScreen}
       />
       <StackPostsSubScreens.Screen
-        options={{ title: "Повернутися", headerTintColor: "#212121" }}
+        options={{
+          title: "Повернутися",
+          headerTintColor: "#212121",
+        }}
         // options={{ headerShown: false }}
         name="commentsPostsSubScreen"
         component={CommentsSubScreen}
       />
       <StackPostsSubScreens.Screen
-        options={{ title: "Повернутися", headerTintColor: "#212121" }}
+        options={{
+          title: "Повернутися",
+          headerTintColor: "#212121",
+        }}
         // options={{ headerShown: false }}
         name="mapPostsSubScreen"
         component={MapSubScreen}

@@ -37,22 +37,8 @@ export const handlerFulfilledGet = (state, { payload }) => {
 
 export const handlerFulfilledPost = (state, { payload }) => {
   state.isLoading = false;
-  // console.log("payload post  ", payload);
-  // state.posts = payload;
-  state.error = null;
-};
-
-export const handlerFulfilledPatch = (state, { payload }) => {
-  state.isLoading = false;
-  console.log(payload);
-  state.contacts = state.contacts
-    .filter(({ id }) => id !== payload.data.id)
-    .concat([payload.data]);
-  state.error = null;
-};
-
-export const handlerFulfilledDelete = (state, { payload }) => {
-  state.isLoading = false;
-  state.contacts = state.contacts.filter(({ id }) => id !== payload.data.id);
+  state.posts = [...state.posts, payload].sort(
+    ({ data: { number } }, { data: { number: number_ } }) => number_ - number
+  );
   state.error = null;
 };

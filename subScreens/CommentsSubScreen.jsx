@@ -28,7 +28,7 @@ import {
 import { setTrigger } from "../redux/triggerSlice/triggerSlice";
 import shortid from "shortid";
 
-export default CommentsSubScreen = ({ route }) => {
+export default CommentsSubScreen = ({ route, navigation }) => {
   const { id, postPicture } = route.params;
   const [myComment, setMyComment] = useState("");
   const [isFormActive, setIsFormActive] = useState(false);
@@ -43,13 +43,23 @@ export default CommentsSubScreen = ({ route }) => {
     console.log("useEffect comments ");
   }, [trigger]);
 
+  navigation.setOptions({
+    tabBarVisible: false,
+  });
+
+  useEffect(() => {
+    navigation.setOptions({
+      tabBarVisible: false,
+    });
+  }, []);
+
   const onSendComment = () => {
     if (!myComment) return;
     dispatch(postCommentThunk({ id, myComment, photoURL, uid }));
     setMyComment("");
     Keyboard.dismiss();
-    const key = shortid.generate();
-    dispatch(setTrigger(key));
+    // const key = shortid.generate();
+    // dispatch(setTrigger(key));
   };
 
   return (

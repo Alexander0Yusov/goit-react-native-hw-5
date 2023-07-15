@@ -19,5 +19,7 @@ export const commentsGetHandlerFulfilled = (state, { payload }) => {
 export const commentPostHandlerFulfilled = (state, { payload }) => {
   state.isLoading = false;
   state.error = null;
-  // console.log("payload comment  ", payload);
+  state.comments = [...state.comments, payload].sort(
+    ({ data: { number } }, { data: { number: number_ } }) => number - number_
+  );
 };

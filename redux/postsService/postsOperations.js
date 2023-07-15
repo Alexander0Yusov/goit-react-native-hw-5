@@ -16,7 +16,9 @@ export const getPosts = async () => {
 };
 
 export const postPost = async (item) => {
-  return await addDoc(collection(db, "posts"), item);
+  const docRef = await addDoc(collection(db, "posts"), item);
+  const doc = await getDoc(docRef);
+  return { id: doc.id, data: doc.data(), commentsCount: 0 };
 };
 
 export const countCommentsEachPost = async () => {
