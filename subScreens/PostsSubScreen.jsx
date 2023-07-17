@@ -10,18 +10,24 @@ import CardPost from "../components/CardPost";
 import { Feather } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { signOutThunk } from "../redux/authService/thunks";
-import { postsSelector, triggerSelector } from "../redux/stateSelectors";
+import { postsSelector } from "../redux/stateSelectors";
 import { getPostsThunk } from "../redux/postsService/thunks";
+import { setScreenName } from "../redux/slaveSlice/slaveSlice";
+import { useFocusEffect } from "@react-navigation/native";
 
-export default PostsScreen = ({ navigation }) => {
+export default PostsScreen = ({ navigation, route }) => {
   const { posts } = useSelector(postsSelector);
-  const { trigger } = useSelector(triggerSelector);
   const dispatch = useDispatch();
+
+  useFocusEffect(() => {
+    dispatch(setScreenName(route.name));
+  });
 
   useEffect(() => {
     dispatch(getPostsThunk());
-    console.log("useEffect posts ", trigger);
-  }, [trigger]);
+    console.log("useEffect posts ");
+    // dispatch(setScreenName(route.name));
+  }, []);
 
   useEffect(() => {
     navigation.setOptions({

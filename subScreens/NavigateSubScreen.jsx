@@ -13,15 +13,21 @@ export default NavigateSubScreen = () => {
         name="basePostsSubScreen"
         component={PostsSubScreen}
       />
+
       <StackPostsSubScreens.Screen
         options={{
           title: "Повернутися",
           headerTintColor: "#212121",
+          tabBarStyle: {
+            height: 0,
+          },
+          tabBarVisible: false,
         }}
         // options={{ headerShown: false }}
         name="commentsPostsSubScreen"
         component={CommentsSubScreen}
       />
+
       <StackPostsSubScreens.Screen
         options={{
           title: "Повернутися",

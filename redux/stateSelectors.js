@@ -2,4 +2,4 @@ export const authSelector = (state) => state.authCombine;
 export const postsSelector = (state) => state.postsCombine;
 export const ownPostsSelector = (state) => state.ownPostsCombine;
 export const commentsSelector = (state) => state.commentsCombine;
-export const triggerSelector = (state) => state.triggerCombine;
+export const slaveSelector = (state) => state.slaveCombine;

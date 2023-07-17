@@ -1,10 +1,20 @@
+import { useEffect } from "react";
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import MapView, { Marker } from "react-native-maps";
+import { useDispatch } from "react-redux";
+import { setScreenName } from "../redux/slaveSlice/slaveSlice";
 
 export default MapSubScreen = ({ route }) => {
   const {
     location: { latitude, longitude },
   } = route.params;
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(setScreenName(route.name));
+  }, []);
+
   return (
     <View style={styles.container}>
       {/* <Text style={styles.title}>Map SubScreen</Text> */}

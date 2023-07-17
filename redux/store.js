@@ -14,7 +14,7 @@ import {
 import { postsReducer } from "./postsService/postsSlice";
 import { ownPostsReducer } from "./ownPostsService/ownPostsSlice";
 import { commentsReducer } from "./commentsSlice/commentsSlice";
-import { triggerReducer } from "./triggerSlice/triggerSlice";
+import { slaveReducer } from "./slaveSlice/slaveSlice";
 
 // import { persistStore, persistReducer } from 'redux-persist';
 // import storage from "redux-persist/lib/storage";
@@ -35,7 +35,7 @@ export const store = configureStore({
     postsCombine: postsReducer,
     ownPostsCombine: ownPostsReducer,
     commentsCombine: commentsReducer,
-    triggerCombine: triggerReducer,
+    slaveCombine: slaveReducer,
   },
   // лечит ошибки в консоли
   middleware: (getDefaultMiddleware) =>

@@ -162,14 +162,19 @@ const optionsProfileScreen = {
   },
 };
 
-export default navSelector = (isAuth) => {
+export default navSelector = (isAuth, screenName) => {
   if (isAuth) {
     return (
       <ButtomTabNav.Navigator initialRouteName="posts" backBehavior="history">
         <ButtomTabNav.Screen
           name="posts"
           component={NavigateSubScreen}
-          options={optionsPostsSubScreen}
+          options={{
+            ...optionsPostsSubScreen,
+            tabBarStyle: {
+              height: screenName === "commentsPostsSubScreen" ? 0 : 83,
+            },
+          }}
         />
         <ButtomTabNav.Screen
           name="createPost"

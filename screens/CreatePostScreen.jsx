@@ -20,7 +20,7 @@ import { authSelector } from "../redux/stateSelectors";
 import { postPostThunk } from "../redux/postsService/thunks";
 import { getFileRef } from "../redux/authService/authOperations";
 import shortid from "shortid";
-import { setTrigger } from "../redux/triggerSlice/triggerSlice";
+import { setTrigger } from "../redux/slaveSlice/slaveSlice";
 
 export default CreatePostScreen = ({ navigation }) => {
   const [cameraRef, setCameraRef] = useState(null);

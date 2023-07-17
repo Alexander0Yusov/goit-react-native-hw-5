@@ -19,13 +19,13 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   authSelector,
   commentsSelector,
-  triggerSelector,
+  slaveSelector,
 } from "../redux/stateSelectors";
 import {
   getCommentsThunk,
   postCommentThunk,
 } from "../redux/commentsSlice/commentsThunks";
-import { setTrigger } from "../redux/triggerSlice/triggerSlice";
+import { setScreenName } from "../redux/slaveSlice/slaveSlice";
 import shortid from "shortid";
 
 export default CommentsSubScreen = ({ route, navigation }) => {
@@ -36,19 +36,18 @@ export default CommentsSubScreen = ({ route, navigation }) => {
   const dispatch = useDispatch();
   const { photoURL, uid } = useSelector(authSelector);
   const { comments } = useSelector(commentsSelector);
-  const { trigger } = useSelector(triggerSelector);
 
   useEffect(() => {
     dispatch(getCommentsThunk(id));
+    dispatch(setScreenName(route.name));
     console.log("useEffect comments ");
-  }, [trigger]);
-
-  navigation.setOptions({
-    tabBarVisible: false,
-  });
+  }, []);
 
   useEffect(() => {
     navigation.setOptions({
+      tabBarStyle: {
+        height: 0,
+      },
       tabBarVisible: false,
     });
   }, []);
@@ -185,7 +184,7 @@ const styles = StyleSheet.create({
     width: "100%",
     height: 50,
     marginTop: 8,
-    marginBottom: 2,
+    marginBottom: 8,
     alignItems: "center",
 
     // borderWidth: 1,

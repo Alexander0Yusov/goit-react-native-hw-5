@@ -98,7 +98,7 @@ const authSlice = createSlice({
       state.displayName = displayName;
       state.email = email;
       state.photoURL = photoURL;
-      console.log("action.payload static", action.payload);
+      console.log("redux setUser action.payload uid == ", uid);
     },
   },
   extraReducers: (builder) => {

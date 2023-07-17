@@ -12,11 +12,7 @@ import { MaterialIcons } from "@expo/vector-icons";
 import { AntDesign } from "@expo/vector-icons";
 import { useDispatch, useSelector } from "react-redux";
 import { signOutThunk, updateUserThunk } from "../redux/authService/thunks";
-import {
-  authSelector,
-  ownPostsSelector,
-  triggerSelector,
-} from "../redux/stateSelectors";
+import { authSelector, ownPostsSelector } from "../redux/stateSelectors";
 import { pickFile } from "../redux/authService/authOperations";
 
 import { getOwnPostsThunk } from "../redux/ownPostsService/thunks";
@@ -28,12 +24,12 @@ export default ProfileScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const state = useSelector(authSelector);
   const { ownPosts } = useSelector(ownPostsSelector);
-  const { trigger } = useSelector(triggerSelector);
+  // const { trigger } = useSelector(triggerSelector);
 
   useEffect(() => {
     dispatch(getOwnPostsThunk(state.uid));
     console.log("useEffect profile ");
-  }, [trigger]);
+  }, []);
 
   const updatePortrait = async () => {
     if (state.photoURL) {
